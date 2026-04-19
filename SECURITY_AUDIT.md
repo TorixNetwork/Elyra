@@ -6,19 +6,19 @@ Scope: secret exposure hardening for subprocesses, logs, and user-controlled URL
 ## Additional Hardening
 
 6) Sensitive env isolation after startup
-Files: `VIVAANXMUSIC/__init__.py`, `VIVAANXMUSIC/utils/security.py`
+Files: `ELYRA/__init__.py`, `ELYRA/utils/security.py`
 Patch: Sensitive env vars are stripped from the live process environment after config load so later child processes do not inherit bot secrets by default.
 
 7) Clean subprocess environments
-Files: `VIVAANXMUSIC/core/call.py`, `VIVAANXMUSIC/core/git.py`, `VIVAANXMUSIC/platforms/Youtube.py`, `VIVAANXMUSIC/plugins/sudo/restart.py`, `VIVAANXMUSIC/plugins/tools/kang.py`, `VIVAANXMUSIC/plugins/tools/tiny.py`, `VIVAANXMUSIC/plugins/tools/videoedit.py`, `VIVAANXMUSIC/utils/formatters.py`
+Files: `ELYRA/core/call.py`, `ELYRA/core/git.py`, `ELYRA/platforms/Youtube.py`, `ELYRA/plugins/sudo/restart.py`, `ELYRA/plugins/tools/kang.py`, `ELYRA/plugins/tools/tiny.py`, `ELYRA/plugins/tools/videoedit.py`, `ELYRA/utils/formatters.py`
 Patch: Child processes now run with a reduced allowlisted environment instead of inheriting all loaded secrets.
 
 8) Secret redaction in logs and error reports
-Files: `VIVAANXMUSIC/logging.py`, `VIVAANXMUSIC/utils/errors.py`, `VIVAANXMUSIC/utils/security.py`
+Files: `ELYRA/logging.py`, `ELYRA/utils/errors.py`, `ELYRA/utils/security.py`
 Patch: Known env and config secrets are redacted before being written to logs, paste output, or Telegram error messages.
 
 9) SSRF and untrusted URL hardening
-Files: `VIVAANXMUSIC/plugins/Kishu/webdl.py`, `VIVAANXMUSIC/plugins/misc/urlshortner.py`, `VIVAANXMUSIC/plugins/misc/downloadrepo.py`, `VIVAANXMUSIC/utils/security.py`
+Files: `ELYRA/plugins/Kishu/webdl.py`, `ELYRA/plugins/misc/urlshortner.py`, `ELYRA/plugins/misc/downloadrepo.py`, `ELYRA/utils/security.py`
 Patch: Public URL validation now blocks localhost, private IPs, credentialed URLs, redirects to untrusted hosts, and URLs containing secret values. `webdl` and `downloadrepo` were restricted to `SUDOERS`, and repo downloads are limited to HTTPS GitHub repos.
 
 Date: 2026-02-05
@@ -27,27 +27,27 @@ Scope: command injection / shell execution and minimal safety hardening per requ
 ## Findings
 
 1) Playlist command injection via yt-dlp shell invocation
-File: `VIVAANXMUSIC/platforms/Youtube.py:239-266`
+File: `ELYRA/platforms/Youtube.py:239-266`
 Issue: Playlist URL was interpolated into a shell command.
 Patch: Replaced shell execution with list-args execution and added minimal URL character blocking (`; & | $ \n \r `).
 
 2) Shell execution in ffmpeg speedup
-File: `VIVAANXMUSIC/core/call.py:176-185`
+File: `ELYRA/core/call.py:176-185`
 Issue: ffmpeg command built as a shell string.
 Patch: Use `create_subprocess_exec` with shlex-split args.
 
 3) os.system use in update/restart commands
-File: `VIVAANXMUSIC/plugins/sudo/restart.py:73-155`
+File: `ELYRA/plugins/sudo/restart.py:73-155`
 Issue: git and heroku commands executed via shell (heroku push includes API key in command string).
 Patch: Use `subprocess.run` with list args and suppress output.
 
 4) os.system in video editing
-File: `VIVAANXMUSIC/plugins/tools/videoedit.py:50-61`
+File: `ELYRA/plugins/tools/videoedit.py:50-61`
 Issue: ffmpeg command executed via shell.
 Patch: Use `subprocess.run` with list args.
 
 5) os.system in tiny sticker conversion
-File: `VIVAANXMUSIC/plugins/tools/tiny.py:34-40`
+File: `ELYRA/plugins/tools/tiny.py:34-40`
 Issue: lottie_convert commands executed via shell.
 Patch: Use `subprocess.run` with list args.
 
@@ -55,7 +55,7 @@ Patch: Use `subprocess.run` with list args.
 `.env` is already gitignored and no `.env` file exists in the repo.
 
 ## Tests
-`python -m py_compile VIVAANXMUSIC/platforms/Youtube.py`
-`python -m py_compile VIVAANXMUSIC/core/call.py`
-`python -m py_compile VIVAANXMUSIC/plugins/sudo/restart.py`
-`python -m py_compile VIVAANXMUSIC/plugins/tools/videoedit.py VIVAANXMUSIC/plugins/tools/tiny.py`
+`python -m py_compile ELYRA/platforms/Youtube.py`
+`python -m py_compile ELYRA/core/call.py`
+`python -m py_compile ELYRA/plugins/sudo/restart.py`
+`python -m py_compile ELYRA/plugins/tools/videoedit.py ELYRA/plugins/tools/tiny.py`

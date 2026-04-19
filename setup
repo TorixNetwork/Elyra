@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-# ======== VivaanXMusic Setup (stable) ========
+# ======== Elyra Setup (stable) ========
 # - Debian/Ubuntu apt only
 # - Required/optional prompts, clear after config
 # - Environment Summary table neatly aligned
@@ -40,10 +40,10 @@ banner(){
   printf "%s" "$(c magenta)"
   cat <<'EOF'
 
- __   _______   ___      _   _  _   ___ _  _ ___ _____ _   _    _    ___ ___ 
- \ \ / /_ _\ \ / /_\    /_\ | \| | |_ _| \| / __|_   _/_\ | |  | |  | __| _ \
-  \ V / | | \ V / _ \  / _ \| .` |  | || .` \__ \ | |/ _ \| |__| |__| _||   /
-   \_/ |___| \_/_/ \_\/_/ \_\_|\_| |___|_|\_|___/ |_/_/ \_\____|____|___|_|_\
+ ___  _  __  __ ____     _         _  _   _  ___  ___   _    _    _    ___  ____
+| __|| | \ \/ /|  _ \   / \       | || \ | |/ __||_ _| / \  | |  | |  | __|| _  \
+| _| | |_ \  / |  _ /  / _ \      | ||  \| |\__ \ | | / _ \ | |_ | |_ | _| |    /
+|___||___|/_/  |_|\_\ /_/ \_\     |_||_|\__||___/ |_|/_/ \_\|___||___||___||_|\_\
                                                                                                                                                        
 
 EOF
@@ -174,7 +174,7 @@ final_notes(){
     warn  "Start script not found — run your launcher from project root"
   fi
   printf "\nLogs:\n  - %s\n  - %s\n  - %s\n" "$APTLOG" "$NODELOG" "$PYLOG"
-  printf "\n%sThank you for using Vivaan Installer%s\n" "$(c bold)$(c cyan)" "$(c reset)"
+  printf "\n%sThank you for using Elyra Installer%s\n" "$(c bold)$(c cyan)" "$(c reset)"
 }
 
 main(){

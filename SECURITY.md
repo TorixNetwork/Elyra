@@ -17,7 +17,7 @@ If you find a security vulnerability, please follow the steps below to report it
 
 ### 1. Contact Us Privately
 
-* Email your findings to: [vivaannetwork@gmail.com](mailto:vivaannetwork@gmail.com)
+* Email your findings to: [torixnetwork@gmail.com](mailto:torixnetwork@gmail.com)
 * **Do not** open a public issue on GitHub to report security vulnerabilities.
 
 ### 2. What You Can Expect

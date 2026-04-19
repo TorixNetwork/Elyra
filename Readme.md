@@ -10,10 +10,10 @@
   <table>
     <tr>
       <td align="center">
-        <img src="https://files.catbox.moe/3m7pfb.jpg" width="90px" style="border-radius: 50%;" />
+        <img src="https://file.garden/aeT9p6iUoRzyQ9xJ/torixlogo.jpg" width="90px" style="border-radius: 50%;" />
       </td>
       <td>
-        <img src="https://readme-typing-svg.herokuapp.com?color=00BFFF&width=600&lines=Hey+There,+This+is+Vivaan+Dev+%F0%9F%A5%80+%E2%9D%97%EF%B8%8F" />
+        <img src="https://readme-typing-svg.herokuapp.com?color=00BFFF&width=600&lines=Hey+There,+This+is+Unknown+Entity+%F0%9F%A5%80+%E2%9D%97%EF%B8%8F" />
       </td>
     </tr>
   </table>
@@ -22,52 +22,52 @@
 <!-- 👁 Visitor Counter -->
 
 <p align="center">
-  <img src="https://komarev.com/ghpvc/?username=SkyBotsDeveloper&style=flat-square" />
+  <img src="https://komarev.com/ghpvc/?username=TorixNetwork&style=flat-square" />
 </p>
 
 <h1 align="center">
-  <img src="https://readme-typing-svg.herokuapp.com?color=FF69B4&width=500&lines=Welcome+to+Vivaan+%F0%9F%8E%B6+The+bot;Your+Ultimate+Telegram+Music+Bot" />
+  <img src="https://readme-typing-svg.herokuapp.com?color=FF69B4&width=500&lines=Welcome+to+Miss+%F0%9F%8E%B6+Elyra+bot;Your+Ultimate+Telegram+multifunctioning+Bot" />
 </h1>
 
 <p align="center">
-  <a href="https://t.me/VivaanSupport">
-    <img src="https://files.catbox.moe/22oahi.jpg" width="600">
+  <a href="https://t.me/Torixsupport">
+    <img src="https://file.garden/aeT9p6iUoRzyQ9xJ/elyradocsimg.jpg" width="600">
   </a>
 </p>
 
 <p align="center">
-  <a href="https://t.me/Vivan_music_bot"><img src="https://img.shields.io/badge/Try%20Bot-@Vivan_music_bot-blue?style=for-the-badge&logo=telegram"/></a>
+  <a href="https://t.me/MissElyraBot"><img src="https://img.shields.io/badge/Try%20Bot-@MissElyraBot-blue?style=for-the-badge&logo=telegram"/></a>
 </p>
 
 
 <p align="center">
-  <a href="https://github.com/SkyBotsDeveloper/VivaanXmusic3.0/stargazers"><img src="https://img.shields.io/github/stars/SkyBotsDeveloper/VivaanXmusic3.0?style=flat-square"/></a>
-  <a href="https://github.com/SkyBotsDeveloper/VivaanXmusic3.0/network/members"><img src="https://img.shields.io/github/forks/SkyBotsDeveloper/VivaanXmusic3.0?style=flat-square"/></a>
-  <a href="https://github.com/SkyBotsDeveloper/VivaanXmusic3.0/issues"><img src="https://img.shields.io/github/issues/SkyBotsDeveloper/VivaanXmusic3.0?style=flat-square"/></a>
-  <a href="https://github.com/SkyBotsDeveloper/VivaanXmusic3.0/commits/main"><img src="https://img.shields.io/github/last-commit/SkyBotsDeveloper/VivaanXmusic3.0?style=flat-square"/></a>
-  <a href="https://github.com/SkyBotsDeveloper/VivaanXmusic3.0/actions"><img src="https://img.shields.io/badge/CI-Status-grey?style=flat-square"/></a>
+  <a href="https://github.com/TorixNetwork/Elyra/stargazers"><img src="https://img.shields.io/github/stars/TorixNetwork/Elyra?style=flat-square"/></a>
+  <a href="https://github.com/TorixNetwork/Elyra/network/members"><img src="https://img.shields.io/github/forks/TorixNetwork/Elyra?style=flat-square"/></a>
+  <a href="https://github.com/TorixNetwork/Elyra/issues"><img src="https://img.shields.io/github/issues/TorixNetwork/Elyra?style=flat-square"/></a>
+  <a href="https://github.com/TorixNetwork/Elyra/commits/main"><img src="https://img.shields.io/github/last-commit/TorixNetwork/Elyra?style=flat-square"/></a>
+  <a href="https://github.com/TorixNetwork/Elyra/actions"><img src="https://img.shields.io/badge/CI-Status-grey?style=flat-square"/></a>
 </p>
 
-## 🌟 What is VivaanXMusic?
+## 🌟 What is Elyra?
 
-**VivaanXMusic** is a modern Telegram bot that streams **high-quality music** into group voice chats.
+**Elyra** is a modern Telegram bot source that streams **high-quality music** into group voice chats.
 Powered by **Pyrogram + PyTgCalls**, it supports multiple platforms like **YouTube, Spotify, Apple Music, SoundCloud, Resso, and more**.
-It also includes **basic group management features** for convenience.
+It also includes **group management features** for convenience and many more generative ai features also.
 
 ## 🚀 Features
 <table>
 <tr>
 <td>
-  <img src="https://files.catbox.moe/iamruq.jpg" width="300" />
+  <img src="https://file.garden/aeT9p6iUoRzyQ9xJ/thumbnail.jpg" width="300" />
 </td>
 <td>
 
 | 🌟 Feature                | 🔎 Description                              |
-| ------------------------- | ------------------------------------------- |
+| ------------------------- | -------------------------------------------  |
 | 🎶 HQ Music Streaming     | Lag‑free HD audio in group voice chats      |
 | 🌐 Multi‑Platform Sources | YouTube, Spotify, Apple Music, Resso, etc.  |
-| 👮 Group Management Tools | Promote/demote, mute/kick, etc.     |
-| ⚡ Fast Setup              | One‑click Heroku, VPS, or Docker deployment |
+| 👮 Group Management Tools | Promote/demote, mute/kick, etc.             |
+| ⚡ Fast Setup             | One‑click Heroku, VPS, or Docker deployment |
 | 🔄 Auto Config            | Quick setup script with pre‑checks          |
 
 </td>
@@ -143,7 +143,7 @@ OCR_SPACE_API_KEY=helloworld  # Optional - OCR.Space key; shared free demo key w
       </tr>
       <tr>
         <td><code>STRING_SESSION</code></td>
-        <td><a href="https://t.me/SessionBuilderbot" target="_blank">@SessionBuilderbot</a></td>
+        <td><a href="https://t.me/SessionStringZBot" target="_blank">@SessionStringZBot</a></td>
         <td>
           1) Start bot →
           2) Provide <code>API_ID</code>/<code>API_HASH</code> →
@@ -158,7 +158,7 @@ OCR_SPACE_API_KEY=helloworld  # Optional - OCR.Space key; shared free demo key w
         <td>
           1) Create private channel/group →
           2) Add your bot as admin →
-          3) Get ID via <code>@Vivan_music_bot</code> or <code>@MissRose_Bot</code>
+          3) Get ID via <code>@MissElyraBot</code> or <code>@MissRose_Bot</code>
         </td>
         <td>Use a private space so logs aren’t public.</td>
       </tr>
@@ -203,7 +203,7 @@ OCR_SPACE_API_KEY=helloworld  # Optional - OCR.Space key; shared free demo key w
   <details>
 
 ```bash
-🎵 Deploy VivaanXMusic on VPS
+🎵 Deploy Elyra on VPS
 
 ### Step 1: Update & Install Packages
 sudo apt update && sudo apt upgrade -y
@@ -213,9 +213,9 @@ sudo apt install -y nodejs
 npm install -g npm
 
 ### Step 2: Clone Repo
-git clone https://github.com/SkyBotsDeveloper/VivaanXmusic3.0
-cd VivaanXmusic3.0
-tmux new -s Vivaan
+git clone https://github.com/TorixNetwork/Elyra
+cd Elyra
+tmux new -s Elyra
 
 ### Step 3: Setup & Run
 python3 -m venv venv
@@ -226,9 +226,9 @@ bash start   # Start bot
 
 ### Useful Commands
 tmux detach         # Use Ctrl+B, then D
-tmux attach-session -t Vivaan # Attach to Running Bot session
-tmux kill-session -t Vivaan # to kill the running bot session
-rm -rf VivaanXmusic3.0 # Uninstall the repo
+tmux attach-session -t Elyra # Attach to Running Bot session
+tmux kill-session -t Elyra # to kill the running bot session
+rm -rf Elyra # Uninstall the repo
 ```
 
   </details>
@@ -245,25 +245,25 @@ rm -rf VivaanXmusic3.0 # Uninstall the repo
 
 ```bash
 ### Step 1: Clone Repo
-git clone https://github.com/SkyBotsDeveloper/VivaanXmusic3.0
-cd VivaanXmusic3.0
+git clone https://github.com/TorixNetwork/Elyra
+cd Elyra
 
 ### Step 2: Create .env File
 nano .env
 # Paste your environment variables here and save (Ctrl+O, Enter, Ctrl+X)
 
 ### Step 3: Build Image
-docker build -t vivaanxmusic .
+docker build -t Elyra .
 
 ### Step 4: Run Container
-docker run -d --name vivaan --env-file .env --restart unless-stopped vivaanxmusic
+docker run -d --name Elyra --env-file .env --restart unless-stopped Elyra
 
 ### Step 5: Manage Container
-docker logs -f vivaan        # View logs (Ctrl+C to exit)
-docker stop vivaan           # Stop container
-docker start vivaan          # Start again
-docker rm -f vivaan          # Remove container
-docker rmi vivaanxmusic      # Remove image
+docker logs -f elyra       # View logs (Ctrl+C to exit)
+docker stop elyra           # Stop container
+docker start elyra          # Start again
+docker rm -f elyra          # Remove container
+docker rmi elyra      # Remove image
 ```
 
   </details>
@@ -276,8 +276,8 @@ docker rmi vivaanxmusic      # Remove image
 
 | Platform                | Deploy Link                                                                                                                                                                                               |
 | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 🔑 **Generate Session** | <a href="https://t.me/SessionBuilderbot"><img src="https://img.shields.io/badge/Session%20-Generator-blue?style=for-the-badge&logo=telegram"/></a>                                                    |
-| 🌍 **Heroku Deploy**    | <a href="http://dashboard.heroku.com/new?template=https://github.com/SkyBotsDeveloper/VivaanXmusic3.0"><img src="https://img.shields.io/badge/Deploy%20to-Heroku-purple?style=for-the-badge&logo=heroku"/></a> |
+| 🔑 **Generate Session** | <a href="https://t.me/SessionStringZBot"><img src="https://img.shields.io/badge/Session%20-Generator-blue?style=for-the-badge&logo=telegram"/></a>                                                    |
+| 🌍 **Heroku Deploy**    | <a href="http://dashboard.heroku.com/new?template=https://github.com/TorixNetwork/Elyra"><img src="https://img.shields.io/badge/Deploy%20to-Heroku-purple?style=for-the-badge&logo=heroku"/></a> |
 
 
 
@@ -285,19 +285,19 @@ docker rmi vivaanxmusic      # Remove image
 ## 💬 Community & Support
 
 <p align="center">
-  <a href="https://t.me/VivaanSupport">
+  <a href="https://t.me/Torixsupport">
     <img src="https://img.shields.io/badge/Support_Group-Telegram-0088cc?style=for-the-badge&logo=telegram&logoColor=white" />
   </a>
-  <a href="https://t.me/VivaanSupport">
+  <a href="https://t.me/Torixnetwork">
     <img src="https://img.shields.io/badge/Updates_Channel-Telegram-6A5ACD?style=for-the-badge&logo=telegram&logoColor=white" />
   </a>
-  <a href="https://t.me/EliteSid">
+  <a href="https://t.me/AboutTorix">
     <img src="https://img.shields.io/badge/Contact_Owner-Telegram-4CAF50?style=for-the-badge&logo=telegram&logoColor=white" />
   </a>
-  <a href="https://instagram.com/elite.sid">
+  <a href="https://www.instagram.com/torixnetwork">
     <img src="https://img.shields.io/badge/Follow-Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white" />
   </a>
-  <a href="mailto:vivaannetwork@gmail.com">
+  <a href="mailto:torixnetwork@gmail.com">
     <img src="https://img.shields.io/badge/Contact-Email-0078D4?style=for-the-badge&logo=gmail&logoColor=white" />
   </a>
 </p>
@@ -306,5 +306,5 @@ docker rmi vivaanxmusic      # Remove image
 ##
 ### 🔖 Credits
 
-* <b> *sᴩᴇᴄɪᴀʟ ᴛʜᴀɴᴋs ᴛᴏ <a href="https://github.com/AnonymousX1025">ᴀɴᴏɴʏ</a> ғᴏʀ <a href="https://github.com/AnonymousX1025/AnonXMusic">ᴀɴᴏɴxᴍᴜsɪᴄ</a>* </b>
-* <b> *ᴄʀᴀғᴛᴇᴅ ᴡɪᴛʜ ᴘᴀssɪᴏɴ ʙʏ <a href="https://github.com/SkyBotsDeveloper">ᴠɪᴠᴀᴀɴ ᴅᴇᴠs</a>* </b>
+* <b> *sᴩᴇᴄɪᴀʟ ᴛʜᴀɴᴋs ᴛᴏ <a href="https://github.com/TeamYukki">TᴇᴀᴍYᴜᴋᴋɪ</a> ғᴏʀ <a href="https://github.com/TeamYukki/YukkiMusicBot">YᴜᴋᴋɪMᴜsɪᴄBᴏᴛ</a>* </b>
+* <b> *ᴄʀᴀғᴛᴇᴅ ᴡɪᴛʜ ᴘᴀssɪᴏɴ ʙʏ <a href="https://github.com/TorixNetwork">Uɴᴋɴᴏᴡɴ Eɴᴛɪᴛʏ</a>* </b>
