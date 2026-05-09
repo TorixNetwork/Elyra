@@ -6,7 +6,7 @@ from functools import lru_cache
 import aiofiles
 import aiohttp
 import numpy as np
-from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont
+from PIL import Image, ImageChops, ImageDraw, ImageEnhance, ImageFilter, ImageFont
 from unidecode import unidecode
 from urllib.request import Request, urlopen
 from youtubesearchpython.future import VideosSearch
@@ -25,6 +25,7 @@ CANVAS_WIDTH = 1280
 CANVAS_HEIGHT = 720
 ART_SIZE = 296
 AVATAR_SIZE = 112
+MAIN_PANEL_BOX = (36, 126, 866, 552)
 ART_CARD_BOX = (882, 118, 1226, 560)
 PLAYBACK_BOX = (44, 566, 1236, 676)
 BRAND_BOX = (964, 38, 1236, 92)
@@ -60,6 +61,22 @@ def antialiased_rounded_mask(size: int, radius: int, scale: int = 4):
     return mask.resize((size, size), Image.LANCZOS)
 
 
+def antialiased_rounded_rect_mask(width: int, height: int, radius: int, scale: int = 4):
+    mask = Image.new("L", (width * scale, height * scale), 0)
+    ImageDraw.Draw(mask).rounded_rectangle(
+        (0, 0, width * scale, height * scale),
+        radius=radius * scale,
+        fill=255,
+    )
+    return mask.resize((width, height), Image.LANCZOS)
+
+
+def alpha_layer(width: int, height: int, color, alpha_map):
+    layer = Image.new("RGBA", (width, height), (*color[:3], 0))
+    layer.putalpha(Image.fromarray(alpha_map.astype(np.uint8), "L"))
+    return layer
+
+
 def masked_circle(image, size: int, border_width: int = 6, border_color=(255, 255, 255, 240)):
     fitted = fit_cover(image, size, size)
     mask = antialiased_circle_mask(size)
@@ -92,6 +109,52 @@ def rounded_media(image, size: int, radius: int = 36, border_width: int = 5):
         width=border_width,
     )
     return result
+
+
+def apply_glass_finish(image, radius: int = 36):
+    """Add a clean reflective glass layer without hiding the artwork."""
+    result = image.convert("RGBA")
+    width, height = result.size
+    mask = antialiased_rounded_rect_mask(width, height, radius)
+
+    gloss = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    y_axis = np.linspace(0.0, 1.0, height, dtype=np.float32)[:, None]
+    top_alpha = np.repeat((36 * np.clip(1 - (y_axis / 0.58), 0, 1)), width, axis=1)
+    bottom_alpha = np.repeat((16 * np.clip((y_axis - 0.62) / 0.38, 0, 1)), width, axis=1)
+    gloss = Image.alpha_composite(gloss, alpha_layer(width, height, (255, 255, 255), top_alpha))
+    gloss = Image.alpha_composite(gloss, alpha_layer(width, height, (6, 10, 16), bottom_alpha))
+
+    shine = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    shine_draw = ImageDraw.Draw(shine)
+    shine_draw.ellipse(
+        (
+            int(width * -0.08),
+            int(height * -0.30),
+            int(width * 1.08),
+            int(height * 0.34),
+        ),
+        fill=(255, 255, 255, 28),
+    )
+    shine = shine.filter(ImageFilter.GaussianBlur(20))
+    gloss = Image.alpha_composite(gloss, shine)
+    gloss.putalpha(ImageChops.multiply(gloss.getchannel("A"), mask))
+
+    result = Image.alpha_composite(result, gloss)
+    edge = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    edge_draw = ImageDraw.Draw(edge)
+    edge_draw.rounded_rectangle(
+        (2, 2, width - 3, height - 3),
+        radius=max(radius - 2, 1),
+        outline=(255, 255, 255, 98),
+        width=2,
+    )
+    edge_draw.rounded_rectangle(
+        (8, 8, width - 9, height - 9),
+        radius=max(radius - 8, 1),
+        outline=(255, 255, 255, 24),
+        width=1,
+    )
+    return Image.alpha_composite(result, edge)
 
 
 def trim_text(text: str, limit: int) -> str:
@@ -306,9 +369,10 @@ def draw_glass_panel(
     base,
     box,
     radius=34,
-    fill=(18, 28, 40, 122),
-    border=(255, 255, 255, 68),
-    blur_radius=18,
+    fill=(255, 255, 255, 22),
+    border=(255, 255, 255, 112),
+    blur_radius=26,
+    reflection_color=None,
     show_top_line=True,
     show_bottom_line=True,
 ):
@@ -319,14 +383,34 @@ def draw_glass_panel(
     shadow = Image.new("RGBA", base.size, (0, 0, 0, 0))
     shadow_draw = ImageDraw.Draw(shadow)
     shadow_draw.rounded_rectangle(
-        (x1 + 10, y1 + 14, x2 + 10, y2 + 14),
+        (x1 + 12, y1 + 18, x2 + 12, y2 + 18),
         radius=radius,
-        fill=(0, 0, 0, 72),
+        fill=(0, 0, 0, 70),
     )
-    shadow = shadow.filter(ImageFilter.GaussianBlur(22))
+    shadow = shadow.filter(ImageFilter.GaussianBlur(30))
     base = Image.alpha_composite(base, shadow)
 
+    rim_glow = Image.new("RGBA", base.size, (0, 0, 0, 0))
+    rim_draw = ImageDraw.Draw(rim_glow)
+    rim_draw.rounded_rectangle(
+        (x1 - 1, y1 - 1, x2 + 1, y2 + 1),
+        radius=radius + 1,
+        outline=(255, 255, 255, 42),
+        width=3,
+    )
+    if reflection_color:
+        rim_draw.rounded_rectangle(
+            (x1 - 2, y1 - 2, x2 + 2, y2 + 2),
+            radius=radius + 2,
+            outline=(*reflection_color[:3], 28),
+            width=4,
+        )
+    rim_glow = rim_glow.filter(ImageFilter.GaussianBlur(8))
+    base = Image.alpha_composite(base, rim_glow)
+
     crop = base.crop((x1, y1, x2, y2)).filter(ImageFilter.GaussianBlur(blur_radius))
+    crop = ImageEnhance.Brightness(crop).enhance(1.10)
+    crop = ImageEnhance.Contrast(crop).enhance(0.94)
     mask = Image.new("L", (width, height), 0)
     mask_draw = ImageDraw.Draw(mask)
     mask_draw.rounded_rectangle((0, 0, width, height), radius=radius, fill=255)
@@ -334,25 +418,79 @@ def draw_glass_panel(
 
     overlay = Image.new("RGBA", (width, height), (0, 0, 0, 0))
     overlay_draw = ImageDraw.Draw(overlay)
+    overlay_draw.rounded_rectangle((0, 0, width, height), radius=radius, fill=(8, 12, 20, 34))
     overlay_draw.rounded_rectangle((0, 0, width, height), radius=radius, fill=fill)
+
+    y_axis = np.linspace(0.0, 1.0, height, dtype=np.float32)[:, None]
+    top_alpha = np.repeat((34 * np.clip(1 - (y_axis / 0.48), 0, 1)), width, axis=1)
+    bottom_alpha = np.repeat((14 * np.clip((y_axis - 0.68) / 0.32, 0, 1)), width, axis=1)
+    overlay = Image.alpha_composite(overlay, alpha_layer(width, height, (255, 255, 255), top_alpha))
+    overlay = Image.alpha_composite(overlay, alpha_layer(width, height, (5, 8, 14), bottom_alpha))
+
+    if reflection_color:
+        reflection_rgb = reflection_color[:3]
+        reflection = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+        reflection_draw = ImageDraw.Draw(reflection)
+        reflection_draw.ellipse(
+            (
+                int(width * 0.48),
+                int(height * -0.36),
+                int(width * 1.18),
+                int(height * 0.56),
+            ),
+            fill=(*reflection_rgb, 18),
+        )
+        reflection_draw.ellipse(
+            (
+                int(width * -0.34),
+                int(height * 0.54),
+                int(width * 0.42),
+                int(height * 1.22),
+            ),
+            fill=(*reflection_rgb, 10),
+        )
+        reflection = reflection.filter(ImageFilter.GaussianBlur(34))
+        overlay = Image.alpha_composite(overlay, reflection)
+
+    shine = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    shine_draw = ImageDraw.Draw(shine)
+    shine_draw.ellipse(
+        (
+            int(width * -0.10),
+            int(height * -0.42),
+            int(width * 1.10),
+            int(height * 0.32),
+        ),
+        fill=(255, 255, 255, 24),
+    )
+    shine = shine.filter(ImageFilter.GaussianBlur(24))
+    overlay = Image.alpha_composite(overlay, shine)
+    overlay_draw = ImageDraw.Draw(overlay)
+    overlay_draw.rounded_rectangle(
+        (1, 0, width - 1, height - 2),
+        radius=radius,
+        outline=(95, 255, 210, 30),
+        width=1,
+    )
+    overlay_draw.rounded_rectangle(
+        (0, 1, width - 2, height - 1),
+        radius=radius,
+        outline=(255, 156, 86, 26),
+        width=1,
+    )
     overlay_draw.rounded_rectangle(
         (0, 0, width - 1, height - 1),
         radius=radius,
         outline=border,
         width=2,
     )
-    if show_top_line:
-        overlay_draw.line(
-            [(26, 24), (width - 28, 24)],
-            fill=(255, 255, 255, 50),
-            width=2,
-        )
-    if show_bottom_line:
-        overlay_draw.line(
-            [(24, height - 26), (width - 24, height - 46)],
-            fill=(255, 255, 255, 20),
-            width=1,
-        )
+    overlay_draw.rounded_rectangle(
+        (6, 6, width - 7, height - 7),
+        radius=max(radius - 6, 1),
+        outline=(255, 255, 255, 18),
+        width=1,
+    )
+    overlay.putalpha(ImageChops.multiply(overlay.getchannel("A"), mask))
     base.alpha_composite(overlay, (x1, y1))
     return base
 
@@ -379,10 +517,139 @@ def accent_palette(image):
     return accent, soft
 
 
+def title_seed(text: str) -> int:
+    value = 0
+    for index, char in enumerate(str(text or "Elyra"), start=1):
+        value = (value + (index * ord(char))) % 1_000_003
+    return value or 431
+
+
+def generated_music_art(title: str, channel: str, seed_text: str):
+    size = 900
+    seed = title_seed(seed_text)
+    yy, xx = np.mgrid[0:size, 0:size].astype(np.float32)
+    x = xx / max(size - 1, 1)
+    y = yy / max(size - 1, 1)
+
+    orange = np.array([255, 142, 72], dtype=np.float32)
+    emerald = np.array([68, 244, 175], dtype=np.float32)
+    violet = np.array([118, 128, 255], dtype=np.float32)
+    base = np.zeros((size, size, 3), dtype=np.float32)
+    base[:] = np.array([8, 12, 22], dtype=np.float32)
+
+    offset = (seed % 97) / 97
+    glow_a = np.exp(-(((x - (0.22 + offset * 0.18)) ** 2) / 0.055 + ((y - 0.22) ** 2) / 0.075))
+    glow_b = np.exp(-(((x - (0.82 - offset * 0.12)) ** 2) / 0.080 + ((y - 0.78) ** 2) / 0.060))
+    glow_c = np.exp(-(((x - 0.60) ** 2) / 0.115 + ((y - (0.30 + offset * 0.20)) ** 2) / 0.070))
+    vertical = np.clip(1.0 - (y * 0.72), 0, 1)
+
+    base += orange * glow_a[..., None] * 0.68
+    base += emerald * glow_b[..., None] * 0.54
+    base += violet * glow_c[..., None] * 0.30
+    base += np.array([20, 26, 38], dtype=np.float32) * vertical[..., None]
+    base = np.clip(base, 0, 255).astype(np.uint8)
+
+    art = Image.fromarray(base, "RGB").convert("RGBA")
+    art = art.filter(ImageFilter.GaussianBlur(10))
+    art = ImageEnhance.Color(art).enhance(1.18)
+    art = ImageEnhance.Contrast(art).enhance(1.05)
+
+    accent_color, accent_soft = accent_palette(art)
+    art = add_glow(art, (-160, -100, 480, 420), (*accent_color, 58), blur_radius=84)
+    art = add_glow(art, (430, 410, 1060, 1060), (*accent_soft, 46), blur_radius=96)
+    art = draw_glass_panel(
+        art,
+        (72, 92, size - 72, size - 92),
+        radius=68,
+        fill=(255, 255, 255, 18),
+        border=(255, 255, 255, 112),
+        blur_radius=30,
+        reflection_color=accent_soft,
+    )
+
+    draw = ImageDraw.Draw(art)
+    title_font = load_font(TITLE_FONT_PATH, 54)
+    channel_font = load_font(META_FONT_PATH, 28)
+    label_font = load_font(META_FONT_PATH, 20)
+    title_lines = wrap_text(draw, title or "Unknown Track", title_font, 620, max_lines=3)
+    total_height = (len(title_lines) * 64) + 46
+    y_start = (size - total_height) // 2
+    for index, line in enumerate(title_lines):
+        line_width = text_width(draw, line, title_font)
+        draw_text_with_outline(
+            draw,
+            ((size - line_width) / 2, y_start + (index * 64)),
+            line,
+            title_font,
+            fill_color=(255, 255, 255),
+            outline_color=(4, 7, 12, 180),
+            outline_width=2,
+        )
+
+    channel_text = trim_text(channel or "Unknown Artist", 32)
+    channel_width = text_width(draw, channel_text, channel_font)
+    draw.text(
+        ((size - channel_width) / 2, y_start + (len(title_lines) * 64) + 12),
+        channel_text,
+        fill=(218, 230, 238),
+        font=channel_font,
+    )
+
+    label = "GENERATED COVER"
+    label_width = text_width(draw, label, label_font)
+    draw.rounded_rectangle(
+        (
+            (size - label_width) / 2 - 20,
+            112,
+            (size + label_width) / 2 + 20,
+            152,
+        ),
+        radius=20,
+        fill=(255, 255, 255, 24),
+        outline=(255, 255, 255, 64),
+        width=1,
+    )
+    draw.text(
+        ((size - label_width) / 2, 121),
+        label,
+        fill=(238, 244, 250),
+        font=label_font,
+    )
+    return art
+
+
+async def load_display_picture(user_id, fallback_avatar_path: str):
+    sp = None
+    if user_id is not None:
+        try:
+            async for photo in app.get_chat_photos(user_id, 1):
+                sp = await app.download_media(photo.file_id, file_name=f"{user_id}.jpg")
+                break
+        except Exception:
+            sp = None
+
+    if sp:
+        try:
+            return Image.open(sp).convert("RGBA"), sp
+        except Exception:
+            sp = None
+
+    if not os.path.isfile(fallback_avatar_path):
+        try:
+            await asyncio.to_thread(cache_remote_file, FALLBACK_AVATAR_URL, fallback_avatar_path)
+        except Exception:
+            pass
+
+    try:
+        return Image.open(fallback_avatar_path).convert("RGBA"), sp
+    except Exception:
+        return Image.new("RGBA", (200, 200), (100, 100, 100, 255)), sp
+
+
 async def get_thumb(videoid, user_id=None):
     """Generate an enhanced glassmorphic playback thumbnail."""
     cache_user_id = user_id if user_id is not None else "blank"
-    cache_path = os.path.join(CACHE_DIR, f"{videoid}_{cache_user_id}_elite_glass_v23.png")
+    cache_path = os.path.join(CACHE_DIR, f"{videoid}_{cache_user_id}_elite_glass_v27.png")
     if os.path.isfile(cache_path):
         return cache_path
 
@@ -391,60 +658,49 @@ async def get_thumb(videoid, user_id=None):
     fallback_avatar_path = os.path.join(CACHE_DIR, "elite_avatar_fallback.jpg")
     sp = None
     try:
-        results = VideosSearch(url, limit=1)
-        results_data = (await results.next()).get("result", [])
-        if not results_data:
-            return YOUTUBE_IMG_URL
+        try:
+            results = VideosSearch(url, limit=1)
+            results_data = (await results.next()).get("result", [])
+        except Exception:
+            results_data = []
 
-        result = results_data[0]
-        title = trim_text(
-            re.sub(r"\s+", " ", re.sub(r"[^\w\s&\-']", " ", result.get("title", ""))).strip().title()
-            or "Unsupported Title",
-            140,
-        )
-        duration = str(result.get("duration") or "Unknown")
-        thumbnail = result.get("thumbnails", [{}])[0].get("url", "").split("?")[0]
-        views = trim_text(str((result.get("viewCount") or {}).get("short") or "Unknown Views"), 18)
-        channel = trim_text(str((result.get("channel") or {}).get("name") or "Unknown Channel"), 34)
-
-        if not thumbnail:
-            return YOUTUBE_IMG_URL
-
-        async with aiohttp.ClientSession() as session:
-            async with session.get(thumbnail) as resp:
-                if resp.status != 200:
-                    return YOUTUBE_IMG_URL
-                f = await aiofiles.open(temp_thumb_path, mode="wb")
-                await f.write(await resp.read())
-                await f.close()
-
-        if user_id is not None:
-            try:
-                async for photo in app.get_chat_photos(user_id, 1):
-                    sp = await app.download_media(photo.file_id, file_name=f"{user_id}.jpg")
-                    break
-            except Exception:
-                sp = None
-
-        if sp:
-            user_dp = Image.open(sp).convert("RGBA")
+        if results_data:
+            result = results_data[0]
+            title = trim_text(
+                re.sub(r"\s+", " ", re.sub(r"[^\w\s&\-']", " ", result.get("title", ""))).strip().title()
+                or "Unsupported Title",
+                140,
+            )
+            duration = str(result.get("duration") or "Unknown")
+            thumbnails = result.get("thumbnails") or []
+            thumbnail = (thumbnails[0].get("url", "") if thumbnails else "").split("?")[0]
+            views = trim_text(str((result.get("viewCount") or {}).get("short") or "Unknown Views"), 18)
+            channel = trim_text(str((result.get("channel") or {}).get("name") or "Unknown Channel"), 34)
         else:
-            if not os.path.isfile(fallback_avatar_path):
-                try:
-                    await asyncio.to_thread(
-                        cache_remote_file,
-                        FALLBACK_AVATAR_URL,
-                        fallback_avatar_path,
-                    )
-                except Exception:
-                    pass
+            title = trim_text(str(videoid or "Unknown Track").replace("_", " ").replace("-", " ").title(), 140)
+            duration = "Unknown"
+            thumbnail = ""
+            views = "Unknown Views"
+            channel = "Unknown Channel"
 
+        youtube_thumb = None
+
+        if thumbnail:
             try:
-                user_dp = Image.open(fallback_avatar_path).convert("RGBA")
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(thumbnail) as resp:
+                        if resp.status == 200:
+                            f = await aiofiles.open(temp_thumb_path, mode="wb")
+                            await f.write(await resp.read())
+                            await f.close()
+                            youtube_thumb = Image.open(temp_thumb_path).convert("RGBA")
             except Exception:
-                user_dp = Image.new("RGBA", (200, 200), (100, 100, 100, 255))
+                youtube_thumb = None
 
-        youtube_thumb = Image.open(temp_thumb_path).convert("RGBA")
+        if youtube_thumb is None:
+            youtube_thumb = generated_music_art(title, channel, f"{videoid}:{title}:{channel}")
+
+        user_dp, sp = await load_display_picture(user_id, fallback_avatar_path)
         accent_color, accent_soft = accent_palette(youtube_thumb)
         playback_accent = blend_rgb(accent_color, accent_soft, 0.28)
         accent_glow = (*accent_color, 78)
@@ -470,31 +726,40 @@ async def get_thumb(videoid, user_id=None):
 
         background = draw_glass_panel(
             background,
+            MAIN_PANEL_BOX,
+            radius=44,
+            fill=(255, 255, 255, 12),
+            border=(255, 255, 255, 64),
+            blur_radius=34,
+            reflection_color=accent_soft,
+        )
+        background = draw_glass_panel(
+            background,
             ART_CARD_BOX,
             radius=40,
-            fill=(17, 26, 37, 92),
-            border=(255, 255, 255, 62),
-            blur_radius=18,
-            show_top_line=False,
-            show_bottom_line=False,
+            fill=(255, 255, 255, 22),
+            border=(255, 255, 255, 118),
+            blur_radius=32,
+            reflection_color=accent_soft,
         )
         background = draw_glass_panel(
             background,
             PLAYBACK_BOX,
             radius=28,
-            fill=(15, 23, 34, 92),
-            border=(255, 255, 255, 56),
-            blur_radius=15,
-            show_top_line=False,
+            fill=(255, 255, 255, 18),
+            border=(255, 255, 255, 110),
+            blur_radius=28,
+            reflection_color=playback_accent,
             show_bottom_line=False,
         )
         background = draw_glass_panel(
             background,
             BRAND_BOX,
             radius=24,
-            fill=(22, 31, 43, 94),
-            border=(255, 255, 255, 54),
-            blur_radius=12,
+            fill=(255, 255, 255, 18),
+            border=(255, 255, 255, 108),
+            blur_radius=22,
+            reflection_color=accent_soft,
             show_top_line=False,
             show_bottom_line=False,
         )
@@ -502,14 +767,18 @@ async def get_thumb(videoid, user_id=None):
             background,
             NOW_PLAYING_BOX,
             radius=22,
-            fill=(22, 31, 43, 96),
-            border=(255, 255, 255, 54),
-            blur_radius=12,
+            fill=(255, 255, 255, 18),
+            border=(255, 255, 255, 108),
+            blur_radius=22,
+            reflection_color=accent_soft,
             show_top_line=False,
             show_bottom_line=False,
         )
 
-        art = rounded_media(youtube_thumb, ART_SIZE, radius=40, border_width=5)
+        art = apply_glass_finish(
+            rounded_media(youtube_thumb, ART_SIZE, radius=40, border_width=5),
+            radius=40,
+        )
         art_x = ART_CARD_BOX[0] + ((ART_CARD_BOX[2] - ART_CARD_BOX[0] - ART_SIZE) // 2)
         art_y = 166
         background = add_glow(
@@ -693,6 +962,11 @@ async def get_thumb(videoid, user_id=None):
         try:
             if os.path.exists(temp_thumb_path):
                 os.remove(temp_thumb_path)
+        except Exception:
+            pass
+        try:
+            if sp and os.path.exists(sp):
+                os.remove(sp)
         except Exception:
             pass
         return YOUTUBE_IMG_URL
