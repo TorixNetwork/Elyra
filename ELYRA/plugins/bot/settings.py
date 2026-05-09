@@ -28,8 +28,8 @@ from ELYRA.utils.inline.settings import (
     setting_markup,
     vote_mode_markup,
 )
-from ELYRA.utils.inline.start import private_panel
-from config import BANNED_USERS, OWNER_ID
+from ELYRA.utils.inline.start import hide_public_owner_info, private_panel
+from config import BANNED_USERS
 
 # ─── SETTINGS MESSAGE ──────────────────────────────────────────────
 
@@ -68,10 +68,11 @@ async def settings_back_markup(client, callback: CallbackQuery, _):
         pass
 
     if callback.message.chat.type == ChatType.PRIVATE:
-        await app.resolve_peer(OWNER_ID)
         buttons = private_panel(_)
         return await callback.edit_message_text(
-            _["start_2"].format(callback.from_user.mention, app.mention),
+            hide_public_owner_info(
+                _["start_2"].format(callback.from_user.mention, app.mention)
+            ),
             reply_markup=InlineKeyboardMarkup(buttons),
         )
     else:

@@ -24,7 +24,7 @@ from ELYRA.utils.database import (
 from ELYRA.utils.decorators.language import LanguageStart
 from ELYRA.utils.formatters import get_readable_time
 from ELYRA.button_styles import primary_button, success_button
-from ELYRA.utils.inline.start import private_panel, start_panel
+from ELYRA.utils.inline.start import hide_public_owner_info, private_panel, start_panel
 from ELYRA.utils.inline.help import first_page
 from config import BANNED_USERS, AYUV, HELP_IMG_URL, START_VIDS, STICKERS
 from strings import get_string
@@ -136,8 +136,17 @@ async def start_pm(client, message: Message, _):
 
     await message.reply_video(
         random.choice(START_VIDS),
-        caption=random.choice(AYUV).format(
-            message.from_user.mention, app.mention, UP, DISK, CPU, RAM, len(served_users), len(served_chats)
+        caption=hide_public_owner_info(
+            random.choice(AYUV).format(
+                message.from_user.mention,
+                app.mention,
+                UP,
+                DISK,
+                CPU,
+                RAM,
+                len(served_users),
+                len(served_chats),
+            )
         ),
         reply_markup=InlineKeyboardMarkup(out),
     )

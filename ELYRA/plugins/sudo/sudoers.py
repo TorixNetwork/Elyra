@@ -64,11 +64,10 @@ async def sudoers_list(client, message: Message):
 @app.on_callback_query(filters.regex("^sudo_list_view$"))
 async def view_sudo_list_callback(client, callback_query: CallbackQuery):
     if callback_query.from_user.id not in SUDOERS:
-        return await callback_query.answer("ᴏɴʟʏ sᴜᴅᴏᴇʀs ᴀɴᴅ ᴏᴡɴᴇʀ ᴄᴀɴ ᴀᴄᴄᴇss ᴛʜɪs", show_alert=True)
+        return await callback_query.answer("Only bot moderators can access this.", show_alert=True)
 
-    owner = await app.get_users(OWNER_ID)
-    caption = f"**˹ʟɪsᴛ ᴏғ ʙᴏᴛ ᴍᴏᴅᴇʀᴀᴛᴏʀs˼**\n\n**🌹Oᴡɴᴇʀ** ➥ {owner.mention}\n\n"
-    keyboard = [[InlineKeyboardButton("๏ ᴠɪᴇᴡ ᴏᴡɴᴇʀ ๏", url=f"tg://openmessage?user_id={OWNER_ID}")]]
+    caption = "**˹ʟɪsᴛ ᴏғ ʙᴏᴛ ᴍᴏᴅᴇʀᴀᴛᴏʀs˼**\n\n"
+    keyboard = []
 
     count = 0
     for user_id in SUDOERS:

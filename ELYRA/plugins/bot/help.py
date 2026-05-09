@@ -14,7 +14,7 @@ from ELYRA.utils.inline.help import (
     private_help_panel,
     second_page,
 )
-from ELYRA.utils.inline.start import private_panel
+from ELYRA.utils.inline.start import hide_public_owner_info, private_panel
 from config import BANNED_USERS, HELP_IMG_URL, SUPPORT_CHAT
 from strings import get_string, helpers
 
@@ -156,6 +156,8 @@ async def action_pun_cb(client: Client, callback_query: types.CallbackQuery, _):
 async def back_to_main_cb(client: Client, callback_query: types.CallbackQuery, _):
     out = private_panel(_)
     await callback_query.edit_message_caption(
-        _["start_2"].format(callback_query.from_user.mention, app.mention),
+        hide_public_owner_info(
+            _["start_2"].format(callback_query.from_user.mention, app.mention)
+        ),
         reply_markup=InlineKeyboardMarkup(out),
     )

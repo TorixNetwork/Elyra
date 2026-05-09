@@ -78,7 +78,7 @@ HELP_7 = """
 - /short, /unshort - shorten or expand a URL.
 - /speedtest, /spt - run a network speed test.
 - /webdl [url] - download a website snapshot/archive.
-- /bug [text or reply] - send a bug report to the owner.
+- /bug [text or reply] - send a bug report to the bot team.
 - /encrypt, /enc [reply] - PM-only: encrypt replied text/media/sticker into a random code.
 - /decrypt, /dec [code] - PM-only: decrypt once, resend content, then delete saved data.
 """
@@ -322,7 +322,7 @@ HELP_31 = """
 - /tts [voice] [text] - direct text-to-speech.
 - /voiceall - export the full voice model list.
 - /autoend [enable|disable] - auto-leave when the voice chat is empty.
-- /botschk - owner checker for monitored bot accounts.
+- /botschk - checker for monitored bot accounts.
 """
 
 HELP_32 = """
@@ -335,12 +335,12 @@ HELP_32 = """
 """
 
 HELP_33 = """
-<b><u>Sudo / Owner</u></b>
+<b><u>Bot Moderation</u></b>
 
 - /sudolist, /listsudo, /sudoers - show current sudo users.
 - /addsudo [reply/@user/id] - add a sudo user.
 - /delsudo, /rmsudo [reply/@user/id] - remove a sudo user.
-- /delallsudo - remove every sudo user except the owner.
+- /delallsudo - remove every sudo user except the protected account.
 - /post - copy a replied message to the configured dump/log chat.
-- /leaveall - dev-only command to make the assistant leave all chats.
+- /leaveall - restricted command to make the assistant leave all chats.
 """

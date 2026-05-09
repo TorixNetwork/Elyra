@@ -3,6 +3,23 @@ from ELYRA import app
 from ELYRA.button_styles import primary_button, success_button
 
 
+def hide_public_owner_info(text: str) -> str:
+    markers = {
+        "tg://openmessage?user_id=",
+        "t.me/abouttorix",
+        "t.me/iflexalgorithm",
+    }
+    if config.OWNER_USERNAME:
+        markers.add(f"t.me/{str(config.OWNER_USERNAME).lstrip('@')}".casefold())
+
+    blocks = text.split("\n\n")
+    return "\n\n".join(
+        block
+        for block in blocks
+        if not any(marker in block.casefold() for marker in markers)
+    ).strip()
+
+
 def start_panel(_):
     buttons = [
         [
@@ -24,7 +41,6 @@ def private_panel(_):
             )
         ],
         [
-            primary_button(text=_["S_B_7"], user_id=config.OWNER_ID),
             success_button(text=_["S_B_4"], url=config.SUPPORT_CHAT),
         ],
         [
